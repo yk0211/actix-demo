@@ -1,8 +1,8 @@
 # stellar
 
 [Windows]
-1. Add in .cargo/config
-[target.x86_64-pc-windows-msvc]
+1. Add in .cargo/config  
+[target.x86_64-pc-windows-msvc]  
 rustflags = ["-Ctarget-feature=+crt-static"]
 
 2. Install MySQL Connector/C  
