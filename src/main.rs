@@ -7,6 +7,7 @@ use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
 use config::{FileFormat, File, Config};
+use log4rs;
 
 mod models;
 use models::DbExcutor;
@@ -17,28 +18,30 @@ struct AppState {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    // create a self-signed temporary cert for testing:
-    // openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365 -subj "/C=CN/ST=sh/L=sh/O=stellar/OU=IT/CN=localhost"
+    let mut config = Config::default();
+    config.merge(File::new("config", FileFormat::Toml)).expect("There are not find config file");
+   
+    let db_url = config.get_str("mysql.db_url").unwrap();
+    let bind_url = config.get_str("web.bind_url").unwrap();
+    let log4rs_path = config.get_str("log.log4rs_path").unwrap();
+    log4rs::init_file(log4rs_path, Default::default()).unwrap();
+
+    let manager = ConnectionManager::<MysqlConnection>::new(db_url);
+    let pool = r2d2::Pool::builder().build(manager).unwrap();
+    let address = SyncArbiter::start(4, move || DbExcutor(pool.clone()));    
+
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
     builder.set_private_key_file("key.pem", SslFiletype::PEM).unwrap();
     builder.set_certificate_chain_file("cert.pem").unwrap();
-
-    let mut config = Config::default();
-    config.merge(File::new("config", FileFormat::Toml)).unwrap();
-   
-    let db_url = config.get_str("mysql.db_url").unwrap();
-    let manager = ConnectionManager::<MysqlConnection>::new(db_url);
-    let pool = r2d2::Pool::builder().build(manager).unwrap();
-    let address = SyncArbiter::start(4, move || DbExcutor(pool.clone())); 
 
     HttpServer::new(move || { 
         App::new()
             .data(AppState { db: address.clone() })
             .wrap(Logger::default())
-            .service(Files::new("/static", "./public").show_files_listing().use_last_modified(true))
+            .service(Files::new("/public", "./public").show_files_listing().use_last_modified(true))
             .service(web::scope("/users").route("/show", web::get().to(index)))
     })
-    .bind_openssl("127.0.0.1:8088", builder)?
+    .bind_openssl(bind_url, builder)?
     .run()
     .await
 }

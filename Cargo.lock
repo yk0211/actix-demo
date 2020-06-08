@@ -1052,6 +1052,7 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "thread-id",
+ "toml",
  "typemap",
  "winapi 0.3.8",
 ]

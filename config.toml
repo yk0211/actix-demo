@@ -1,2 +1,8 @@
 [mysql]
 db_url = "mysql://root:123456@127.0.0.1:3306/db_test"
+
+[web]
+bind_url = "127.0.0.1:8080"
+
+[log]
+log4rs_path = "./log4rs.toml"
