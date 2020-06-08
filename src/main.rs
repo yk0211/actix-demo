@@ -1,4 +1,3 @@
-
 use actix::prelude::*;
 use actix_files::Files;
 use actix_web::{web, App, HttpServer, HttpResponse, middleware::Logger};
