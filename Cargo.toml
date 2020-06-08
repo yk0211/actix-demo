@@ -7,11 +7,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+diesel = { version = "1.4.4", features = ["mysql", "r2d2"] }
 openssl = { version = "0.10.29", features = ["v110"] }
 actix-web = { version = "2.0.0", features = ["openssl"] }
 actix-rt = "1.0.0"
 actix-files = "0.2.1"
 actix-web-actors = "2.0.0"
-config = "0.10.1"
+actix = "0.9.0"
+config = { version = "0.10.1", features = ["toml"] }
 log4rs = "0.12.0"
-diesel = { version = "1.4.4", features = ["mysql"] }
+r2d2 = "0.8.8"
