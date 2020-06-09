@@ -6,7 +6,7 @@ path = "log/stellar.log"
 
 [appenders.file.encoder]
 kind = "pattern"
-pattern = "{l} {d(%Y-%m-%d %H:%M:%S)} {M} {L} - {m} {n}"
+pattern = "[{l}] {d(%Y-%m-%d %H:%M:%S)} {M} {L} - {m} {n}"
 
 [root]
 level = "info"
