@@ -1,3 +1,6 @@
+#[macro_use] 
+extern crate diesel;
+
 use actix::prelude::*;
 use actix_files::Files;
 use actix_web::{web, App, HttpServer, HttpResponse, middleware::Logger};
@@ -9,7 +12,10 @@ use config::{FileFormat, File, Config};
 use log4rs;
 
 mod models;
+mod schema;
+
 use models::DbExcutor;
+
 #[allow(dead_code)]
 struct AppState {
     db: Addr<DbExcutor>

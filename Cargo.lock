@@ -503,6 +503,7 @@ checksum = "80094f509cf8b5ae86a4966a39b3ff66cd7e2a3e594accec3743ff3fabeab5b2"
 dependencies = [
  "num-integer",
  "num-traits 0.2.11",
+ "serde 1.0.111",
  "time",
 ]
 
@@ -585,6 +586,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33d7ca63eb2efea87a7f56a283acc49e2ce4b2bd54adf7465dc1d81fef13d8fc"
 dependencies = [
  "byteorder",
+ "chrono",
  "diesel_derives",
  "mysqlclient-sys",
  "percent-encoding",
@@ -1692,11 +1694,14 @@ dependencies = [
  "actix-rt",
  "actix-web",
  "actix-web-actors",
+ "chrono",
  "config",
  "diesel",
  "log4rs",
  "openssl",
  "r2d2",
+ "serde 1.0.111",
+ "uuid",
 ]
 
 [[package]]
@@ -1940,6 +1945,16 @@ dependencies = [
  "idna",
  "matches",
  "percent-encoding",
+]
+
+[[package]]
+name = "uuid"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fde2f6a4bea1d6e007c4ad38c6839fa71cbb63b6dbf5b595aa38dc9b1093c11"
+dependencies = [
+ "rand",
+ "serde 1.0.111",
 ]
 
 [[package]]
