@@ -4,22 +4,16 @@ extern crate diesel;
 use actix::prelude::*;
 use actix_files::Files;
 use actix_web::{web, App, HttpServer, HttpResponse, middleware::Logger};
-
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
-
 use config::{FileFormat, File, Config};
 use log4rs;
 
 mod models;
 mod schema;
+mod error;
 
-use models::DbExcutor;
-
-#[allow(dead_code)]
-struct AppState {
-    db: Addr<DbExcutor>
-}
+use models::{DbExcutor, AppState};
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -41,7 +35,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || { 
         App::new()
-            .data(AppState { db: address.clone() })
+            .data(AppState { address: address.clone() })
             .wrap(Logger::default())
             .service(Files::new("/public", "./public").show_files_listing().use_last_modified(true))
             .service(web::scope("/users").route("/show", web::get().to(index)))

@@ -1,3 +1,4 @@
+use actix::prelude::*;
 use actix::{Actor, SyncContext};
 use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
@@ -13,6 +14,9 @@ impl Actor for DbExcutor {
     type Context = SyncContext<Self>;
 }
 
+pub struct AppState {
+    pub address: Addr<DbExcutor>
+}
 
 #[derive(Serialize, Deserialize, Insertable, Queryable, Debug)]
 #[table_name = "t_user"]
