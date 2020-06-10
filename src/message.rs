@@ -1,3 +1,8 @@
+#[derive(Debug, Serialize)]
+pub struct ResponseError {
+    pub code: u32,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct RequestRegister {
     pub account: String,
