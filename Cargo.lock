@@ -1707,6 +1707,7 @@ dependencies = [
  "config",
  "diesel",
  "flatbuffers",
+ "log",
  "log4rs",
  "openssl",
  "r2d2",
