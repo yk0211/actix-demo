@@ -1,19 +1,26 @@
 #[macro_use] 
 extern crate diesel;
 
+#[macro_use]
+extern crate serde;
+
 use actix::prelude::*;
 use actix_files::Files;
-use actix_web::{web, App, HttpServer, HttpResponse, middleware::Logger};
+use actix_web::{web, App, HttpServer, middleware::Logger};
 use diesel::{r2d2::ConnectionManager, MysqlConnection};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use config::{FileFormat, File, Config};
 use log4rs;
 
-mod models;
+mod model;
 mod schema;
 mod error;
+mod route;
+mod handler;
+mod message;
 
-use models::{DbExcutor, AppState};
+use model::{DbExcutor, AppState};
+use route::*;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -35,16 +42,13 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || { 
         App::new()
-            .data(AppState { address: address.clone() })
+            .data(AppState { db: address.clone() })
             .wrap(Logger::default())
             .service(Files::new("/public", "./public").show_files_listing().use_last_modified(true))
-            .service(web::scope("/users").route("/show", web::get().to(index)))
+            .service(web::scope("/user")
+                .route("/register", web::post().to(register)))
     })
     .bind_openssl(bind_url, builder)?
     .run()
     .await
-}
-
-async fn index() -> HttpResponse {
-    HttpResponse::Ok().body("test....")
 }

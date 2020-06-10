@@ -2,8 +2,6 @@ use actix::prelude::*;
 use actix::{Actor, SyncContext};
 use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
-use diesel::{Insertable, Queryable};
-use serde::{Serialize, Deserialize};
 use chrono::NaiveDateTime;
 
 use crate::schema::t_user;
@@ -15,10 +13,10 @@ impl Actor for DbExcutor {
 }
 
 pub struct AppState {
-    pub address: Addr<DbExcutor>
+    pub db: Addr<DbExcutor>
 }
 
-#[derive(Serialize, Deserialize, Insertable, Queryable, Debug)]
+#[derive(Insertable, Queryable, Debug)]
 #[table_name = "t_user"]
 pub struct User {
     pub uuid: String,

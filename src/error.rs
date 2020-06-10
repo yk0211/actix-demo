@@ -1,4 +1,6 @@
 #[allow(dead_code)]
-enum ServiceError {
-    InternalServerError,
+pub enum ServiceError {
+    Successful = 0,
+    InternalServerError = 100,
+    AccountHasExist = 200,
 }
