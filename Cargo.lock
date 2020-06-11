@@ -1712,6 +1712,7 @@ dependencies = [
  "openssl",
  "r2d2",
  "serde 1.0.111",
+ "serde_json",
  "uuid",
 ]
 
