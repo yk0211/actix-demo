@@ -1,5 +1,5 @@
 use actix::{Handler, Message};
-use chrono::{Duration, Local};
+use chrono::Local;
 use uuid::Uuid;
 use diesel::prelude::*;
 use diesel::MysqlConnection;
@@ -31,15 +31,17 @@ impl Handler<RequestRegister> for DbExcutor {
             return Err(ResponseError { code: ServiceError::AccountHasExist as u32});
         }
 
+        let now = Local::now().naive_local();
         let new_user = User {
             uuid: Uuid::new_v4().to_string(),
-            gender: 1,
-            phone_number: msg.phone_number,
-            head_url: String::from(""),
             account: msg.account,
             password: msg.password,
-            create_at: Local::now().naive_local(),
-            update_at: Local::now().naive_local() + Duration::hours(24)
+            nickname: String::from(""),
+            gender: 1,
+            phone_number: msg.phone_number,
+            head_image: String::from("default.jpg"),           
+            create_at: now,
+            last_login_at: now
         };
 
         diesel::insert_into(t_user)
@@ -51,8 +53,13 @@ impl Handler<RequestRegister> for DbExcutor {
 
         let resp = ResponseRegister {
             code: ServiceError::Successful as u32,
+            uuid: new_user.uuid,
             account: new_user.account,
-            password: new_user.phone_number,
+            password: new_user.password,
+            nickname: new_user.nickname,
+            gender: new_user.gender,
+            phone_number: new_user.phone_number,
+            head_image: new_user.head_image,
         };
 
         Ok(resp)

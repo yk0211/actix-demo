@@ -13,6 +13,11 @@ pub struct RequestRegister {
 #[derive(Debug, Serialize)]
 pub struct ResponseRegister {
     pub code: u32,
+    pub uuid: String,
     pub account: String,
     pub password: String,
+    pub nickname: String,
+    pub gender: i8,
+    pub phone_number: String,
+    pub head_image: String,
 }
