@@ -44,7 +44,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(AppState { db: address.clone() })
             .wrap(Logger::default())
-            .service(Files::new("/public", "./public").show_files_listing().use_last_modified(true))
+            .service(Files::new("/", "./public").show_files_listing().use_last_modified(true))
             .service(web::scope("/user")
                 .route("/register", web::post().to(register)))
     })
