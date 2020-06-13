@@ -1,13 +1,32 @@
-use actix::{Handler, Message};
+use actix::{Handler, Message, StreamHandler};
+use actix_web_actors::ws;
 use chrono::Local;
 use uuid::Uuid;
 use diesel::prelude::*;
 use diesel::MysqlConnection;
+use std::time::Instant;
 
 use crate::error::ServiceError;
-use crate::model::{DbExcutor, User};
+use crate::model::{DbExcutor, WsExcutor, User};
 use crate::message::*;
 use crate::schema::t_user::dsl::{t_user, account};
+
+impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsExcutor {
+    fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
+        match msg {
+            Ok(ws::Message::Ping(msg)) => {
+                self.heartbeat = Instant::now();
+                ctx.pong(&msg);
+            },
+            Ok(ws::Message::Pong(_)) => {
+                self.heartbeat = Instant::now();
+            }
+            Ok(ws::Message::Text(text)) => ctx.text(text),
+            Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
+            _ => (),
+        }
+    }
+}
 
 impl Message for RequestRegister {
     type Result = Result<ResponseRegister, ResponseError>;

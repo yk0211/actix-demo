@@ -1,8 +1,10 @@
 use actix::prelude::*;
 use actix::{Actor, SyncContext};
+use actix_web_actors::ws;
 use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
 use chrono::NaiveDateTime;
+use std::time::{Duration, Instant};
 
 use crate::schema::t_user;
 
@@ -14,6 +16,38 @@ impl Actor for DbExcutor {
 
 pub struct AppState {
     pub db: Addr<DbExcutor>
+}
+
+pub const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
+pub const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
+
+pub struct WsExcutor {
+    pub heartbeat: Instant
+}
+
+impl Actor for WsExcutor {
+    type Context = ws::WebsocketContext<Self>;
+
+    fn started(&mut self, ctx: &mut Self::Context) {
+        self.set_heartbeat(ctx);
+    }
+}
+
+impl WsExcutor {
+    pub fn new() -> Self {
+        Self {heartbeat: Instant::now()}
+    }
+
+    fn set_heartbeat(&self, ctx: &mut <Self as Actor>::Context) {
+        ctx.run_interval(HEARTBEAT_INTERVAL, |act, ctx| {
+            if Instant::now().duration_since(act.heartbeat) > CLIENT_TIMEOUT {
+                ctx.stop();
+                return;
+            }
+    
+            ctx.ping(b"");
+        });       
+    }
 }
 
 #[derive(Insertable, Queryable, Debug)]

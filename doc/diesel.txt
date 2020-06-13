@@ -1,18 +1,18 @@
 [Usage]
 1.Create a database
-Diesel setup - database - url "mysql://root:123456@127.0.0.1:3306/db_test"
+diesel setup --database-url "mysql://root:123456@127.0.0.1:3306/db_test"
 
 2. Create entities
-Diesel migration generate create_ {table}
+diesel migration generate create_ {table}
 
 3. Fill in the SQL and execute it
 (1) the up. The SQL, the SQL
 (2) diesel migration run
 
 4. Uninstall and re-execute the SQL
-Diesel migration redo
+diesel migration redo
 
-With.env, you can omit -- database-URL
+With.env, you can omit --database-url
 1. Set environment variables
 .env is used for local development mode
 DATABASE_URL = mysql://root:123456@127.0.0.1:3306/db_test
@@ -20,4 +20,4 @@ DATABASE_URL = mysql://root:123456@127.0.0.1:3306/db_test
 DATABASE_URL = mysql://root:123456@127.0.0.1:3306/db_test
 
 2. Pass the parameters
-Diesel Migration Run -- database-URL "mysql://root:123456@127.0.0.1:3306/db_test"
+diesel migration run --database-url "mysql://root:123456@127.0.0.1:3306/db_test"
